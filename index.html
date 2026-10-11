@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>سَـهـل جولد DH | النظام الشامل لإدارة البصريات والموارد</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Changa:wght@600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a0ca3;
+            --accent: #d4af37;
+            --accent-glow: linear-gradient(135deg, #d4af37 0%, #f5e79e 50%, #aa7c11 100%);
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #00b4d8;
+            --bg-body: #080e1e;
+            --bg-card: #0f172a;
+            --bg-input: #060b17;
+            --border: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --sidebar-width: 270px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        /* --- شاشة الدخول الاحترافية (PIN: 1234) --- */
+        #auth_screen {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, #172554, #020617);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth_card {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(20px);
+            padding: 40px 30px;
+            border-radius: 30px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
+        }
+
+        .auth_card h1 {
+            font-family: 'Changa', sans-serif;
+            font-size: 36px;
+            background: var(--accent-glow);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+
+        .auth_input {
+            width: 100%;
+            padding: 16px;
+            border-radius: 16px;
+            border: 2px solid var(--border);
+            background: var(--bg-input);
+            font-size: 28px;
+            text-align: center;
+            color: #fff;
+            letter-spacing: 12px;
+            margin: 20px 0;
+            outline: none;
+            transition: 0.3s;
+        }
+        .auth_input:focus { border-color: var(--accent); }
+
+        /* --- القائمة الجانبية (للكمبيوتر واللابتوب) --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-card);
+            height: 100vh;
+            position: fixed;
+            right: 0;
+            top: 0;
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .sidebar_logo {
+            padding: 25px 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar_logo h2 {
+            font-family: 'Changa';
+            font-size: 24px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .sidebar_logo .logo-badge {
+            background: var(--accent-glow);
+            color: #000;
+            padding: 3px 10px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 900;
+        }
+
+        .nav_menu {
+            flex: 1;
+            padding: 15px 10px;
+            list-style: none;
+            overflow-y: auto;
+        }
+
+        .nav_item {
+            padding: 13px 16px;
+            margin-bottom: 7px;
+            border-radius: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            color: var(--text-muted);
+            font-weight: 700;
+            font-size: 13px;
+            transition: 0.25s;
+        }
+
+        .nav_item:hover {
+            background: rgba(67, 97, 238, 0.1);
+            color: #fff;
+        }
+
+        .nav_item.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .nav_item i {
+            margin-left: 12px;
+            font-size: 17px;
+            width: 22px;
+            text-align: center;
+        }
+
+        /* --- الحاوية الرئيسية للمحتوى --- */
+        .main_content {
+            margin-right: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            padding: 30px;
+            min-height: 100vh;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 24px;
+            border: 1px solid var(--border);
+            margin-bottom: 22px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+        }
+
+        .page_header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .page_title {
+            font-size: 22px;
+            font-weight: 900;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* --- شبكة البطاقات المالية والإحصائية --- */
+        .stats_grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 24px;
+        }
+
+        .stat_card {
+            background: var(--bg-card);
+            padding: 18px 20px;
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: 0.3s;
+        }
+        .stat_card:hover { transform: translateY(-3px); }
+
+        .stat_icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        /* --- المدخلات والأزرار العامة --- */
+        .form_group { margin-bottom: 14px; }
+        .form_group label { display: block; margin-bottom: 6px; font-weight: 700; font-size: 13px; color: var(--text-muted); }
+
+        input, select {
+            width: 100%;
+            padding: 13px 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--bg-input);
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: 0.25s;
+        }
+        input:focus, select:focus { border-color: var(--primary); }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: 0.25s;
+            touch-action: manipulation;
+        }
+        .btn_primary { background: var(--primary); color: #fff; }
+        .btn_primary:hover { background: var(--primary-dark); }
+        .btn_success { background: var(--success); color: #fff; }
+        .btn_danger { background: var(--danger); color: #fff; }
+        .btn_warning { background: var(--warning); color: #000; }
+        .btn_gold { background: var(--accent-glow); color: #000; font-weight: 900; }
+
+        /* --- كروت فحص العيون (Prescription Cards) المتوافقة هاتفياً --- */
+        .eye_box {
+            background: #060b17;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+        .eye_box h4 { font-size: 14px; font-weight: 800; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .eye_grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 10px;
+        }
+        .eye_grid div label { font-size: 11px; color: var(--text-muted); font-weight: bold; margin-bottom: 4px; display: block; }
+        .eye_grid div input { text-align: center; font-weight: 800; font-size: 14px; padding: 10px; }
+
+        /* --- الجداول العامة وسلاسة التمرير --- */
+        .table_container {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table.data_table {
+            width: 100%;
+            min-width: 650px;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: right;
+        }
+        table.data_table th {
+            padding: 14px 12px;
+            color: var(--text-muted);
+            border-bottom: 2px solid var(--border);
+            font-weight: 800;
+        }
+        table.data_table td {
+            padding: 14px 12px;
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+        }
+        table.data_table tr:hover td { background: rgba(255,255,255,0.02); }
+
+        /* --- النوافذ المنبثقة والإشعارات (Modals & Toasts) --- */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 5000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+        }
+        .modal_content {
+            background: var(--bg-card);
+            padding: 26px;
+            border-radius: 22px;
+            width: 100%;
+            max-width: 580px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+        }
+
+        .toast_stack {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            z-index: 10001;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+        .toast {
+            pointer-events: auto;
+            background: var(--bg-card);
+            padding: 14px 20px;
+            border-radius: 14px;
+            border-right: 5px solid var(--primary);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            animation: slideIn 0.3s ease forwards;
+        }
+        @keyframes slideIn { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* --- التوافق المتقدم مع الهواتف الذكية (Mobile Responsive) --- */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 100%;
+                height: 65px;
+                top: auto;
+                bottom: 0;
+                border-left: none;
+                border-top: 1px solid var(--border);
+                background: rgba(15, 23, 42, 0.96);
+                backdrop-filter: blur(16px);
+                flex-direction: row;
+            }
+            .sidebar_logo { display: none; }
+            .nav_menu {
+                display: flex;
+                padding: 0;
+                justify-content: space-around;
+                align-items: center;
+                width: 100%;
+            }
+            .nav_item {
+                flex-direction: column;
+                font-size: 10px;
+                padding: 7px 3px;
+                margin: 0;
+                border-radius: 10px;
+                gap: 2px;
+            }
+            .nav_item i { margin: 0; font-size: 15px; width: auto; }
+            .nav_item.active { box-shadow: none; }
+
+            .main_content {
+                margin-right: 0 !important;
+                width: 100% !important;
+                padding: 15px 15px 85px 15px;
+            }
+            .card { padding: 18px; border-radius: 18px; }
+            .stats_grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .stat_card { padding: 12px; gap: 10px; }
+            .stat_card h2 { font-size: 16px; }
+            .stat_icon { width: 40px; height: 40px; font-size: 18px; }
+            .page_title { font-size: 18px; }
+        }
+
+        /* --- وضع الطباعة الحرارية والمكتبية --- */
+        @media print {
+            body * { visibility: hidden !important; }
+            #printableReceipt, #printableReceipt * { visibility: visible !important; }
+            #printableReceipt {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                max-width: 80mm;
+                padding: 10px;
+                color: #000 !important;
+                background: #fff !important;
+                font-size: 11px;
+            }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="toast_stack" id="toast_stack"></div>
+
+    <!-- 1. شاشة الدخول السرية -->
+    <div id="auth_screen">
+        <div class="auth_card">
+            <h1>سَـهـل جولد DH</h1>
+            <p style="color: var(--text-muted); font-size: 13px;">نظام إدارة البصريات والمبيعات المتكامل</p>
+            <input type="password" id="access_pin" class="auth_input" placeholder="••••" maxlength="4" inputmode="numeric">
+            <button class="btn btn_gold" style="width: 100%; padding: 15px; font-size: 15px;" onclick="verifyAccess()">دخول النظام</button>
+            <p id="auth_error" style="color: var(--danger); margin-top: 14px; font-weight: 800; font-size: 13px; display: none;">الرمز السري غير صحيح (الافتراضي: 1234)</p>
+        </div>
+    </div>
+
+    <!-- 2. شريط التنقل الشامل (جانبي للكمبيوتر / سفلي للموبايل) -->
+    <aside class="sidebar" id="sidebar_ui" style="display:none;">
+        <div class="sidebar_logo">
+            <h2>سَـهـل جولد <span class="logo-badge">DH</span></h2>
+        </div>
+        <ul class="nav_menu">
+            <li class="nav_item active" onclick="navigate(event, 'dashboard')"><i class="fas fa-chart-line"></i><span>الرئيسية</span></li>
+            <li class="nav_item" onclick="navigate(event, 'pos')"><i class="fas fa-cash-register"></i><span>كشف وبيع</span></li>
+            <li class="nav_item" onclick="navigate(event, 'orders')"><i class="fas fa-receipt"></i><span>فواتير اليوم</span></li>
+            <li class="nav_item" onclick="navigate(event, 'archive')"><i class="fas fa-box-archive"></i><span>الأرشيف القديم</span></li>
+            <li class="nav_item" onclick="navigate(event, 'inventory')"><i class="fas fa-boxes-stacked"></i><span>المخزن</span></li>
+            <li class="nav_item" onclick="navigate(event, 'customers')"><i class="fas fa-users"></i><span>العملاء</span></li>
+            <li class="nav_item" onclick="navigate(event, 'accounting')"><i class="fas fa-calculator"></i><span>الحسابات</span></li>
+            <li class="nav_item" onclick="navigate(event, 'settings')"><i class="fas fa-gears"></i><span>الإعدادات</span></li>
+        </ul>
+    </aside>
+
+    <!-- 3. المحتوى التنفيذي -->
+    <main class="main_content" id="main_ui" style="display:none;">
+
+        <!-- شريط تنبيه النواقص التلقائي -->
+        <div id="low_stock_alert" onclick="navigate(null, 'inventory')" style="display:none; background: var(--warning); color: #000; padding: 12px 18px; border-radius: 14px; margin-bottom: 18px; cursor: pointer; text-align: center; font-weight: 800; font-size: 13px;">
+            <i class="fas fa-triangle-exclamation"></i> تنبيه: توجد أصناف وصلت لحد النواقص بالمخزن! (اضغط هنا للمعاينة)
+        </div>
+
+        <!-- أ. لوحة المتابعة السريعة (Dashboard) -->
+        <section id="dashboard_page">
+            <div class="page_header">
+                <h2 class="page_title"><i class="fas fa-tachometer-alt" style="color:var(--primary)"></i> لوحة المتابعة (اليوم الحالي)</h2>
+                <div id="clock_display" style="color: var(--accent); font-weight: 800; font-size: 12px;"></div>
+            </div>
+
+            <div class="stats_grid">
+                <div class="stat_card">
+                    <div class="stat_icon" style="background: rgba(67, 97, 238, 0.15); color: var(--primary);"><i class="fas fa-wallet"></i></div>
+                    <div><p style="color:var(--text-muted); font-size: 12px;">مبيعات اليوم</p><h2 id="dash_today_sales">0 ج.م</h2></div>
+                </div>
+                <div class="stat_card">
+                    <div class="stat_icon" style="background: rgba(16, 185, 129, 0.15); color: var(--success);"><i class="fas fa-vault"></i></div>
+                    <div><p style="color:var(--text-muted); font-size: 12px;">تحصيل اليوم (الخزينة)</p><h2 id="dash_total_cash" style="color:var(--success)">0 ج.م</h2></div>
+                </div>
+                <div class="stat_card">
+                    <div class="stat_icon" style="background: rgba(245, 158, 11, 0.15); color: var(--warning);"><i class="fas fa-clock"></i></div>
+                    <div><p style="color:var(--text-muted); font-size: 12px;">المتبقي الآجل (عربونات)</p><h2 id="dash_total_rem" style="color:var(--warning)">0 ج.م</h2></div>
+                </div>
+                <div class="stat_card">
+                    <div class="stat_icon" style="background: rgba(0, 180, 216, 0.15); color: var(--info);"><i class="fas fa-glasses"></i></div>
+                    <div><p style="color:var(--text-muted); font-size: 12px;">قيد التجهيز</p><h2 id="dash_pending_count">0</h2></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="page_header">
+                    <h3 style="font-size: 15px; font-weight: 800;">أحدث فواتير اليوم النشطة</h3>
+                    <button class="btn btn_primary" style="padding: 8px 14px; font-size: 12px;" onclick="navigate(null, 'pos')">+ فاتورة جديدة</button>
+                </div>
+                <div class="table_container">
+                    <table class="data_table" id="recent_orders_table">
+                        <thead>
+                            <tr>
+                                <th>كود</th>
+                                <th>العميل</th>
+                                <th>الهاتف</th>
+                                <th>الإجمالي</th>
+                                <th>المدفوع</th>
+                                <th>المتبقي</th>
+                                <th>الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ب. نقطة البيع وكشف النظارات (POS & Optometry Rx) -->
+        <section id="pos_page" style="display:none;">
+            <div class="card">
+                <div class="page_header">
+                    <h2 class="page_title"><i class="fas fa-eye" style="color:var(--accent)"></i> كشف نظارة وتسجيل فاتورة</h2>
+                    <span id="pos_order_code" style="color:var(--accent); font-weight: 800; font-size: 13px;"></span>
+                </div>
+
+                <form id="pos_form" onsubmit="event.preventDefault(); processSale();">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;">
+                        <div class="form_group">
+                            <label>رقم هاتف العميل (11 رقم إلزامي) *</label>
+                            <input type="tel" id="pos_phone" maxlength="11" placeholder="01xxxxxxxxx" required inputmode="numeric" oninput="handlePhoneInput(this.value)">
+                            <small id="phone_validation_msg" style="font-size: 11px; margin-top: 4px; display: block;"></small>
+                        </div>
+                        <div class="form_group">
+                            <label>اسم العميل *</label>
+                            <input type="text" id="pos_name" placeholder="الاسم الثلاثي" required>
+                        </div>
+                        <div class="form_group">
+                            <label>العنوان (اختياري)</label>
+                            <input type="text" id="pos_address" placeholder="المدينة / الشارع">
+                        </div>
+                        <div class="form_group">
+                            <label>موعد الاستلام المتوقع</label>
+                            <input type="date" id="pos_delivery_date">
+                        </div>
+                    </div>
+
+                    <!-- كشف مقاسات العيون بتصميم متجاوب تماماً لكل الشاشات -->
+                    <div style="background: rgba(6, 11, 23, 0.5); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin: 15px 0;">
+                        <div style="font-size: 13px; font-weight: 800; color: var(--accent); margin-bottom: 12px;">
+                            <i class="fas fa-file-waveform"></i> قياسات كشف النظارة (Prescription)
+                        </div>
+
+                        <!-- العين اليمنى -->
+                        <div class="eye_box" style="border-right: 4px solid #f59e0b;">
+                            <h4 style="color:#f59e0b;"><i class="fas fa-circle-dot"></i> العين اليمنى (Right Eye - R)</h4>
+                            <div class="eye_grid">
+                                <div><label>SPH (اسفير)</label><input type="text" id="rx_r_sph" placeholder="0.00"></div>
+                                <div><label>CYL (سلندر)</label><input type="text" id="rx_r_cyl" placeholder="0.00"></div>
+                                <div><label>AXIS (محور)</label><input type="text" id="rx_r_axis" placeholder="180"></div>
+                                <div><label>+ADD (قراءة)</label><input type="text" id="rx_r_add" placeholder="+2.00"></div>
+                            </div>
+                        </div>
+
+                        <!-- العين اليسرى -->
+                        <div class="eye_box" style="border-right: 4px solid #00e5ff;">
+                            <h4 style="color:#00e5ff;"><i class="fas fa-circle-dot"></i> العين اليسرى (Left Eye - L)</h4>
+                            <div class="eye_grid">
+                                <div><label>SPH (اسفير)</label><input type="text" id="rx_l_sph" placeholder="0.00"></div>
+                                <div><label>CYL (سلندر)</label><input type="text" id="rx_l_cyl" placeholder="0.00"></div>
+                                <div><label>AXIS (محور)</label><input type="text" id="rx_l_axis" placeholder="180"></div>
+                                <div><label>+ADD (قراءة)</label><input type="text" id="rx_l_add" placeholder="+2.00"></div>
+                            </div>
+                        </div>
+
+                        <div class="form_group" style="margin-top: 10px;">
+                            <label>انحراف الحدقة (IPD)</label>
+                            <input type="text" id="rx_ipd" placeholder="62" style="text-align: center; max-width: 250px;">
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 10px;">
+                            <div class="form_group">
+                                <label>اختيار الشنبر من المخزن (للخصم الآلي)</label>
+                                <select id="pos_frame_select" onchange="autoFillFramePrice()"></select>
+                            </div>
+                            <div class="form_group">
+                                <label>مواصفات ونوع العدسات</label>
+                                <input type="text" id="pos_lens_desc" placeholder="مثلاً: Blue Cut 1.56 Anti-Scratch">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- الحسابات المالية وطرق الدفع -->
+                    <div style="background: #060b17; padding: 16px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 16px;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px;">
+                            <div class="form_group">
+                                <label>حالة الطلب</label>
+                                <select id="pos_order_status">
+                                    <option value="pending">عربون وتجهيز (لسه هيستلم)</option>
+                                    <option value="delivered">نقدي فوري (تم الاستلام)</option>
+                                </select>
+                            </div>
+                            <div class="form_group">
+                                <label>طريقة الدفع</label>
+                                <select id="pos_payment_method">
+                                    <option value="cash">نقدي (كاش بالدرج)</option>
+                                    <option value="instapay">إنستاباي / محفظة ذكية</option>
+                                    <option value="visa">بطاقة بنكية / فيزا</option>
+                                </select>
+                            </div>
+                            <div class="form_group">
+                                <label>الإجمالي (ج.م)</label>
+                                <input type="number" id="pos_total" step="0.5" value="0" required oninput="calcPosFinancials()" style="font-weight:bold; font-size:16px;">
+                            </div>
+                            <div class="form_group">
+                                <label>المدفوع حالياً (ج.م)</label>
+                                <input type="number" id="pos_paid" step="0.5" value="0" required oninput="calcPosFinancials()" style="color:var(--success); font-weight:bold; font-size:16px;">
+                            </div>
+                            <div class="form_group">
+                                <label>المتبقي (محسوب آلياً)</label>
+                                <input type="text" id="pos_remaining" value="0.00" readonly style="color:var(--warning); font-weight:bold; font-size:16px; background:#0f172a; cursor:not-allowed;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button type="submit" class="btn btn_gold" style="flex: 2; min-width: 200px; padding: 14px;"><i class="fas fa-check-circle"></i> حفظ الفاتورة وطباعة الإيصال</button>
+                        <button type="button" class="btn btn_danger" style="flex: 1; min-width: 140px;" onclick="resetPos()"><i class="fas fa-trash"></i> مسح الخانات</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- ج. فواتير اليوم وحركات التسليم النشطة (Today's Orders) -->
+        <section id="orders_page" style="display:none;">
+            <div class="card">
+                <div class="page_header">
+                    <h2 class="page_title"><i class="fas fa-receipt" style="color:var(--info)"></i> فواتير اليوم الحالي</h2>
+                    <div style="flex: 1; max-width: 350px;">
+                        <input type="text" id="search_today_orders" placeholder="بحث بالاسم أو الهاتف أو الكود..." oninput="renderOrdersTable()">
+                    </div>
+                </div>
+
+                <div class="table_container">
+                    <table class="data_table" id="orders_table">
+                        <thead>
+                            <tr>
+                                <th>كود</th>
+                                <th>التوقيت</th>
+                                <th>العميل</th>
+                                <th>الهاتف</th>
+                                <th>الإجمالي</th>
+                                <th>المدفوع</th>
+                                <th>المتبقي</th>
+                                <th>الاستلام</th>
+                                <th>الحالة</th>
+                                <th>إجراءات وتحكم</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- د. واجهة أرشيف الفواتير المقفلة للأيام القديمة (Archive Search) -->
+        <section id="archive_page" style="display:none;">
+            <div class="card">
+                <div class="page_header">
+                    <h2 class="page_title"><i class="fas fa-box-archive" style="color:var(--warning)"></i> أرشيف الفواتير المقفلة للأيام السابقة</h2>
+                </div>
+
+                <!-- شريط البحث المتقدم في الأيام القديمة -->
+                <div style="background: rgba(6, 11, 23, 0.6); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 20px;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                        <div class="form_group" style="margin-bottom:0;">
+                            <label>من تاريخ:</label>
+                            <input type="date" id="archive_date_from" onchange="renderArchiveTable()">
+                        </div>
+                        <div class="form_group" style="margin-bottom:0;">
+                            <label>إلى تاريخ:</label>
+                            <input type="date" id="archive_date_to" onchange="renderArchiveTable()">
+                        </div>
+                        <div class="form_group" style="margin-bottom:0;">
+                            <label>بحث بالاسم / الهاتف / كود الفاتورة:</label>
+                            <input type="text" id="archive_keyword" placeholder="اكتب للبحث الفوري..." oninput="renderArchiveTable()">
+                        </div>
+                        <div style="display: flex; align-items: flex-end;">
+                            <button class="btn btn_primary" style="width: 100%; height: 46px;" onclick="resetArchiveFilters()"><i class="fas fa-rotate"></i> إعادة ضبط الفلاتر</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table_container">
+                    <table class="data_table" id="archive_table">
+                        <thead>
+                            <tr>
+                                <th>كود</th>
+                                <th>تاريخ الفاتورة</th>
+                                <th>العميل</th>
+                                <th>الهاتف</th>
+                                <th>الإجمالي</th>
+                                <th>المدفوع</th>
+                                <th>المتبقي</th>
+                                <th>طريقة الدفع</th>
+                                <th>الحالة</th>
+                                <th>إجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- هـ. إدارة المخزن والشنابر (Inventory) -->
+        <section id="inventory_page" style="display:none;">
+            <div class="card">
+                <div class="page_header">
+                    <h2 class="page_title"><i class="fas fa-boxes-stacked" style="color:var(--primary)"></i> إدارة مخزون الشنابر</h2>
+                    <button class="btn btn_primary" onclick="openProductModal()">+ إضافة شنبر جديد</button>
+                </div>
+
+                <div class="table_container">
+                    <table class="data_table" id="inventory_table">
+                        <thead>
+                            <tr>
+                                <th>كود الصنف</th>
+                                <th>اسم / موديل الشنبر</th>
+                                <th>التكلفة</th>
+                                <th>سعر البيع</th>
+                                <th>الرصيد المتاح</th>
+                                <th>الحالة</th>
+                                <th>تحكم</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- و. قاعدة بيانات العملاء (Customers) -->
+        <section id="customers_page" style="display:none;">
+            <div class="card">
+                <div class="page_header">
+                    <h2 class="page_title"><i class="fas fa-users" style="color:var(--success)"></i> سجل العملاء الدائم</h2>
+                </div>
+                <div class="table_container">
+                    <table class="data_table" id="customers_table">
+                        <thead>
+                            <tr>
+                                <th>اسم العميل</th>
+                                <th>رقم الهاتف</th>
+                                <th>العنوان</th>
+                                <th>عدد العمليات</th>
+                                <th>إجمالي المشتريات</th>
+                                <th>مراسلة</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ز. الحسابات والخزينة وتقفيل الورديات (Accounting) -->
+        <section id="accounting_page" style="display:none;">
+            <div class="stats_grid">
+                <div class="stat_card"><div><p style="color:var(--text-muted); font-size:12px;">مبيعات اليوم النشط</p><h2 id="acc_gross">0 ج.م</h2></div></div>
+                <div class="stat_card"><div><p style="color:var(--text-muted); font-size:12px;">كاش بالدرج اليوم</p><h2 id="acc_cash" style="color:var(--success)">0 ج.م</h2></div></div>
+                <div class="stat_card"><div><p style="color:var(--text-muted); font-size:12px;">إنستاباي / فيزا اليوم</p><h2 id="acc_digital" style="color:var(--info)">0 ج.م</h2></div></div>
+                <div class="stat_card"><div><p style="color:var(--text-muted); font-size:12px;">مصروفات اليوم</p><h2 id="acc_expenses" style="color:var(--danger)">0 ج.م</h2></div></div>
+            </div>
+
+            <div class="card">
+                <h3 style="font-size: 15px; margin-bottom: 12px;">تسجيل مصروف جديد من الخزينة اليومية</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;">
+                    <input type="text" id="exp_note" placeholder="البيان (كهرباء، شاي، صيانة...)">
+                    <input type="number" id="exp_val" placeholder="المبلغ">
+                    <button class="btn btn_primary" onclick="addExpense()">+ تسجيل المصروف</button>
+                </div>
+
+                <div class="table_container" style="margin-top: 18px;">
+                    <table class="data_table" id="expenses_table">
+                        <thead><tr><th>البيان</th><th>القيمة</th><th>التاريخ</th><th>حذف</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- إغلاق الوردية اليدوي (اختياري بجانب التقفيل التلقائي) -->
+            <div class="card" style="border: 2px dashed var(--danger); background: rgba(239, 68, 68, 0.04);">
+                <h3 style="color: var(--danger); font-size: 15px; margin-bottom: 6px;"><i class="fas fa-shield-halved"></i> إغلاق الوردية يدوياً</h3>
+                <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 14px;">(ملاحظة: النظام يقفل ويصفي اليوم تلقائياً عند منتصف الليل، يمكنك أيضاً التقفيل يدوياً في أي وقت).</p>
+                <button class="btn btn_danger" style="width: 100%; padding: 14px;" onclick="closeShift(true)"><i class="fas fa-cash-register"></i> تقفيل الوردية الحالية الآن</button>
+
+                <div class="table_container" style="margin-top: 18px;">
+                    <h4 style="font-size: 14px; margin-bottom: 8px;">سجل تقارير الورديات والأيام المقفلة سابقة</h4>
+                    <table class="data_table" id="daily_reports_table">
+                        <thead><tr><th>التاريخ</th><th>إجمالي المبيعات</th><th>المحصل بالخزينة</th><th>المصروفات</th><th>الصافي</th><th>التوقيت</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ح. الإعدادات والنسخ الاحتياطي والدعم (Settings) -->
+        <section id="settings_page" style="display:none;">
+            <div class="card" style="max-width: 520px; margin: auto; text-align: center; padding: 35px 20px;">
+                <div style="width: 90px; height: 90px; border-radius: 50%; background: var(--accent-glow); margin: 0 auto 12px auto; display: flex; align-items: center; justify-content: center; font-size: 34px; color: #000; font-weight: 900;">
+                    DH
+                </div>
+                <h2 style="font-family:'Changa'; font-size: 24px; color: #fff;">Eng. Mohamed Magdy</h2>
+                <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 22px;">مالك ومطور نظام سهل DH لإدارة البصريات</p>
+
+                <div style="display: grid; grid-template-columns: 1fr; gap: 10px;">
+                    <button class="btn btn_success" onclick="exportData()"><i class="fas fa-file-export"></i> تنزيل نسخة احتياطية كاملة (Backup)</button>
+                    <label class="btn btn_primary" style="cursor:pointer; margin:0;">
+                        <i class="fas fa-file-import"></i> استيراد نسخة احتياطية سابقة
+                        <input type="file" id="import_file" style="display:none;" onchange="importData(event)">
+                    </label>
+                    <button class="btn btn_danger" onclick="factoryReset()"><i class="fas fa-trash"></i> تصفير النظام ومسح البيانات نهائياً</button>
+                </div>
+
+                <div style="margin-top: 24px; padding: 14px; background: rgba(67, 97, 238, 0.1); border-radius: 16px; border: 1px dashed var(--primary);">
+                    <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">للاشتراكات والدعم الفني المباشر:</p>
+                    <a href="https://wa.me/201096141190?text=استفسار%20عن%20نظام%20سهل%20DH" target="_blank" style="color: var(--primary); font-weight: 900; font-size: 16px; text-decoration: none;">
+                        <i class="fab fa-whatsapp"></i> 01096141190
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal إضافة/تعديل صنف في المخزن -->
+    <div class="modal" id="product_modal">
+        <div class="modal_content">
+            <h3 id="modal_product_title" style="margin-bottom: 14px; font-size: 16px;">إضافة شنبر للمخزن</h3>
+            <input type="hidden" id="edit_prod_id">
+            <div class="form_group"><label>كود الشنبر (مثال: RB-102)</label><input type="text" id="m_prod_code"></div>
+            <div class="form_group"><label>اسم / موديل الشنبر</label><input type="text" id="m_prod_name"></div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div class="form_group"><label>سعر التكلفة</label><input type="number" id="m_prod_cost"></div>
+                <div class="form_group"><label>سعر البيع</label><input type="number" id="m_prod_price"></div>
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div class="form_group"><label>الكمية المتاحة</label><input type="number" id="m_prod_stock"></div>
+                <div class="form_group"><label>حد التنبيه (النواقص)</label><input type="number" id="m_prod_alert" value="2"></div>
+            </div>
+            <div style="display:flex; gap: 10px; margin-top: 15px;">
+                <button class="btn btn_primary" style="flex:1" onclick="saveProduct()">حفظ الصنف</button>
+                <button class="btn btn_danger" onclick="closeModal('product_modal')">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- حاوية الفاتورة الحرارية 80mm والطباعة العامة -->
+    <div id="printableReceipt" class="hidden">
+        <div style="text-align: center; border-bottom: 1px dashed #000; padding-bottom: 6px; margin-bottom: 6px;">
+            <h2 style="font-size: 16px; font-weight: 900; margin: 0;">سهل DH OPTICS</h2>
+            <p style="font-size: 10px; margin: 2px 0;">نظارات طبية وشمسية وعدسات لاصقة</p>
+            <p style="font-size: 10px; margin: 0;">هاتف: 01096141190</p>
+        </div>
+
+        <div style="font-size: 11px; margin-bottom: 6px; line-height: 1.5;">
+            <div><strong>كود الفاتورة:</strong> <span id="pr_code"></span></div>
+            <div><strong>التاريخ:</strong> <span id="pr_date"></span></div>
+            <div><strong>الاستلام المتوقع:</strong> <span id="pr_delivery"></span></div>
+            <div><strong>العميل:</strong> <span id="pr_name"></span></div>
+            <div><strong>الهاتف:</strong> <span id="pr_phone"></span></div>
+        </div>
+
+        <table style="width: 100%; border: 1px solid #000; text-align: center; font-size: 10px; border-collapse: collapse; margin-bottom: 6px;">
+            <tr style="background: #eee;">
+                <th style="border: 1px solid #000; padding: 2px;">العين</th>
+                <th style="border: 1px solid #000; padding: 2px;">SPH</th>
+                <th style="border: 1px solid #000; padding: 2px;">CYL</th>
+                <th style="border: 1px solid #000; padding: 2px;">AXIS</th>
+                <th style="border: 1px solid #000; padding: 2px;">+ADD</th>
+                <th style="border: 1px solid #000; padding: 2px;">IPD</th>
+            </tr>
+            <tr>
+                <td style="border: 1px solid #000; padding: 2px; font-weight: bold;">R</td>
+                <td style="border: 1px solid #000; padding: 2px;" id="pr_r_sph">-</td>
+                <td style="border: 1px solid #000; padding: 2px;" id="pr_r_cyl">-</td>
+                <td style="border: 1px solid #000; padding: 2px;" id="pr_r_axis">-</td>
+                <td style="border: 1px solid #000; padding: 2px;" id="pr_r_add">-</td>
+                <td style="border: 1px solid #000; padding: 2px;" rowspan="2" id="pr_ipd">-</td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid #000; padding: 2px; font-weight: bold;">L</td>
+                <td style="border: 1px solid #000; padding: 2px;" id="pr_l_sph">-</td>
+                <td style="border: 1px solid #000; padding: 2px;" id="pr_l_cyl">-</td>
+                <td style="border: 1px solid #000; padding: 2px;" id="pr_l_axis">-</td>
+                <td style="border: 1px solid #000; padding: 2px;" id="pr_l_add">-</td>
+            </tr>
+        </table>
+
+        <div style="font-size: 10px; margin-bottom: 6px;">
+            <div><strong>الشنبر:</strong> <span id="pr_frame"></span></div>
+            <div><strong>العدسات:</strong> <span id="pr_lens"></span></div>
+        </div>
+
+        <div style="border-top: 1px dashed #000; padding-top: 4px; font-size: 11px;">
+            <div style="display: flex; justify-content: space-between;">
+                <span>الإجمالي:</span>
+                <strong id="pr_total"></strong>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span>المدفوع (<span id="pr_method"></span>):</span>
+                <strong id="pr_paid"></strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-top: 1px solid #000; padding-top: 2px; margin-top: 2px;">
+                <span>المتبقي:</span>
+                <strong id="pr_rem"></strong>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 10px; font-size: 9px; border-top: 1px dashed #000; padding-top: 4px;">
+            <p style="margin: 0;">شكراً لزيارتكم DH Optics | الاستلام بأصل الإيصال</p>
+            <p style="margin: 2px 0;">نظام سهل جولد DH - م/ محمد مجدي</p>
+        </div>
+    </div>
+
+    <!-- محرك الجافاسكريبت الشامل والمتطور -->
+    <script>
+        const toCents = (n) => Math.round((Number(n) || 0) * 100);
+        const fromCents = (c) => (c / 100).toFixed(2);
+        const getTodayStr = () => new Date().toISOString().slice(0, 10);
+
+        let APP_DATA = JSON.parse(localStorage.getItem('SAHL_DH_OPTICS_MASTER_DATA')) || {
+            orders: [],
+            customers: [],
+            inventory: [
+                { id: '1', code: 'RB-3025', name: 'RayBan Aviator Gold Metal', cost: 750, price: 1450, stock: 6, alertLimit: 2 },
+                { id: '2', code: 'TF-501', name: 'Tom Ford Square Acetate Black', cost: 1100, price: 2100, stock: 2, alertLimit: 2 }
+            ],
+            expenses: [],
+            shifts: [],
+            meta: { 
+                currentDay: getTodayStr() // لحساب التصفير التلقائي لليوم
+            }
+        };
+
+        const syncData = () => {
+            localStorage.setItem('SAHL_DH_OPTICS_MASTER_DATA', JSON.stringify(APP_DATA));
+            refreshUI();
+        };
+
+        // فحص التصفية التلقائية عند منتصف الليل
+        function checkAutoDayReset() {
+            const today = getTodayStr();
+            if (!APP_DATA.meta || !APP_DATA.meta.currentDay) {
+                APP_DATA.meta = { currentDay: today };
+                syncData();
+                return;
+            }
+
+            if (APP_DATA.meta.currentDay !== today) {
+                // مر منتصف الليل ودخلنا في يوم جديد -> أرشفة اليوم السابق تلقائياً
+                const pastDate = APP_DATA.meta.currentDay;
+                const pastOrders = APP_DATA.orders.filter(o => o.dateStr === pastDate);
+                const pastExpenses = APP_DATA.expenses.filter(e => e.dateStr === pastDate);
+
+                let pastSalesCents = 0;
+                let pastPaidCents = 0;
+                pastOrders.forEach(o => {
+                    pastSalesCents += o.totalCents;
+                    pastPaidCents += o.paidCents;
+                });
+                let pastExpCents = pastExpenses.reduce((acc, curr) => acc + curr.valCents, 0);
+
+                if (pastOrders.length > 0 || pastExpenses.length > 0) {
+                    APP_DATA.shifts.unshift({
+                        date: pastDate,
+                        sales: fromCents(pastSalesCents),
+                        cash: fromCents(pastPaidCents),
+                        expenses: fromCents(pastExpCents),
+                        net: fromCents(pastPaidCents - pastExpCents),
+                        time: 'تقفيل آلي (منتصف الليل)'
+                    });
+                }
+
+                // تحديث اليوم الجديد
+                APP_DATA.meta.currentDay = today;
+                syncData();
+                showToast(`تم بدء وردية يوم جديد (${today}) وتصفير العداد وتخزين اليوم السابق بالأرشيف تلقائياً`, 'info');
+            }
+        }
+
+        function navigate(e, pageId) {
+            document.querySelectorAll('main section').forEach(s => s.style.display = 'none');
+            const target = document.getElementById(pageId + '_page');
+            if (target) target.style.display = 'block';
+
+            document.querySelectorAll('.nav_item').forEach(i => i.classList.remove('active'));
+            if (e && e.currentTarget) e.currentTarget.classList.add('active');
+            else {
+                const navMatch = document.querySelector(`.nav_item[onclick*="'${pageId}'"]`);
+                if (navMatch) navMatch.classList.add('active');
+            }
+            if (pageId === 'archive') renderArchiveTable();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function verifyAccess() {
+            const pin = document.getElementById('access_pin').value;
+            if (pin === '1234') {
+                sessionStorage.setItem('dh_master_login', 'true');
+                document.getElementById('auth_screen').style.display = 'none';
+                document.getElementById('sidebar_ui').style.display = 'flex';
+                document.getElementById('main_ui').style.display = 'block';
+                showToast('أهلاً بك يا باشمهندس محمد - تم فتح النظام بنجاح', 'success');
+                checkAutoDayReset();
+                refreshUI();
+            } else {
+                document.getElementById('auth_error').style.display = 'block';
+            }
+        }
+
+        window.addEventListener('load', () => {
+            if (sessionStorage.getItem('dh_master_login') === 'true') {
+                document.getElementById('auth_screen').style.display = 'none';
+                document.getElementById('sidebar_ui').style.display = 'flex';
+                document.getElementById('main_ui').style.display = 'block';
+                checkAutoDayReset();
+                refreshUI();
+            }
+            const d = new Date();
+            d.setDate(d.getDate() + 2);
+            document.getElementById('pos_delivery_date').value = d.toISOString().slice(0, 10);
+            updateOrderCodePreview();
+        });
+
+        function updateOrderCodePreview() {
+            document.getElementById('pos_order_code').innerText = 'كود الفاتورة: #DH-' + Math.floor(1000 + Math.random() * 9000);
+        }
+
+        const phoneRegex = /^01[0125][0-9]{8}$/;
+        function handlePhoneInput(val) {
+            const v = val.trim();
+            const msg = document.getElementById('phone_validation_msg');
+            if (v.length === 11) {
+                if (phoneRegex.test(v)) {
+                    msg.innerHTML = '<span style="color:var(--success)">✓ رقم هاتف صحيح</span>';
+                    const c = APP_DATA.customers.find(x => x.phone === v);
+                    if (c) {
+                        document.getElementById('pos_name').value = c.name;
+                        document.getElementById('pos_address').value = c.address || '';
+                        showToast(`تم استرجاع بيانات العميل: ${c.name}`, 'info');
+                    }
+                } else {
+                    msg.innerHTML = '<span style="color:var(--danger)">يبدأ بـ 010 أو 011 أو 012 أو 015</span>';
+                }
+            } else {
+                msg.innerHTML = `<span style="color:var(--text-muted)">${v.length}/11 رقم</span>`;
+            }
+        }
+
+        function calcPosFinancials() {
+            const tCents = toCents(document.getElementById('pos_total').value);
+            const pCents = toCents(document.getElementById('pos_paid').value);
+            const rCents = Math.max(0, tCents - pCents);
+            document.getElementById('pos_remaining').value = fromCents(rCents);
+        }
+
+        function populateFrameSelect() {
+            const select = document.getElementById('pos_frame_select');
+            select.innerHTML = '<option value="">-- اختر الشنبر من المخزن للخصم التلقائي --</option>';
+            APP_DATA.inventory.forEach(item => {
+                select.innerHTML += `<option value="${item.id}">${item.name} (${item.code}) - متاح: ${item.stock}</option>`;
+            });
+        }
+
+        function autoFillFramePrice() {
+            const id = document.getElementById('pos_frame_select').value;
+            const item = APP_DATA.inventory.find(i => i.id === id);
+            if (item) {
+                document.getElementById('pos_total').value = item.price;
+                calcPosFinancials();
+            }
+        }
+
+        function processSale() {
+            const phone = document.getElementById('pos_phone').value.trim();
+            if (!phoneRegex.test(phone)) {
+                return showToast('يجب إدخال 11 رقم هاتف صحيح', 'danger');
+            }
+
+            const name = document.getElementById('pos_name').value.trim();
+            const totalCents = toCents(document.getElementById('pos_total').value);
+            const paidCents = toCents(document.getElementById('pos_paid').value);
+            const remCents = Math.max(0, totalCents - paidCents);
+
+            const frameId = document.getElementById('pos_frame_select').value;
+            let frameName = 'شنبر خارجي';
+            if (frameId) {
+                const item = APP_DATA.inventory.find(i => i.id === frameId);
+                if (item && item.stock > 0) {
+                    item.stock -= 1;
+                    frameName = item.name;
+                }
+            }
+
+            let cust = APP_DATA.customers.find(c => c.phone === phone);
+            if (cust) {
+                cust.name = name;
+                cust.address = document.getElementById('pos_address').value.trim() || cust.address;
+                cust.orderCount = (cust.orderCount || 0) + 1;
+                cust.totalPurchases += totalCents;
+            } else {
+                APP_DATA.customers.push({
+                    name,
+                    phone,
+                    address: document.getElementById('pos_address').value.trim(),
+                    orderCount: 1,
+                    totalPurchases: totalCents
+                });
+            }
+
+            const today = getTodayStr();
+            const order = {
+                id: 'DH-' + Math.floor(1000 + Math.random() * 9000),
+                timestamp: new Date().toISOString(),
+                dateStr: today, // ربط الفاتورة باليوم
+                deliveryDate: document.getElementById('pos_delivery_date').value || 'غير محدد',
+                name,
+                phone,
+                address: document.getElementById('pos_address').value.trim(),
+                rx: {
+                    r_sph: document.getElementById('rx_r_sph').value,
+                    r_cyl: document.getElementById('rx_r_cyl').value,
+                    r_axis: document.getElementById('rx_r_axis').value,
+                    r_add: document.getElementById('rx_r_add').value,
+                    l_sph: document.getElementById('rx_l_sph').value,
+                    l_cyl: document.getElementById('rx_l_cyl').value,
+                    l_axis: document.getElementById('rx_l_axis').value,
+                    l_add: document.getElementById('rx_l_add').value,
+                    ipd: document.getElementById('rx_ipd').value
+                },
+                frame: frameName,
+                lens: document.getElementById('pos_lens_desc').value || '-',
+                totalCents,
+                paidCents,
+                remCents,
+                paymentMethod: document.getElementById('pos_payment_method').value,
+                status: document.getElementById('pos_order_status').value
+            };
+
+            APP_DATA.orders.unshift(order);
+            syncData();
+            printReceipt(order.id);
+            resetPos();
+            showToast('تم حفظ الفاتورة وتثبيت الحساب بنجاح', 'success');
+        }
+
+        function printReceipt(orderId) {
+            const o = APP_DATA.orders.find(x => x.id === orderId);
+            if (!o) return;
+
+            document.getElementById('pr_code').innerText = o.id;
+            document.getElementById('pr_date').innerText = new Date(o.timestamp).toLocaleDateString('ar-EG');
+            document.getElementById('pr_delivery').innerText = o.deliveryDate;
+            document.getElementById('pr_name').innerText = o.name;
+            document.getElementById('pr_phone').innerText = o.phone;
+            document.getElementById('pr_r_sph').innerText = o.rx.r_sph || '-';
+            document.getElementById('pr_r_cyl').innerText = o.rx.r_cyl || '-';
+            document.getElementById('pr_r_axis').innerText = o.rx.r_axis || '-';
+            document.getElementById('pr_r_add').innerText = o.rx.r_add || '-';
+            document.getElementById('pr_l_sph').innerText = o.rx.l_sph || '-';
+            document.getElementById('pr_l_cyl').innerText = o.rx.l_cyl || '-';
+            document.getElementById('pr_l_axis').innerText = o.rx.l_axis || '-';
+            document.getElementById('pr_l_add').innerText = o.rx.l_add || '-';
+            document.getElementById('pr_ipd').innerText = o.rx.ipd || '-';
+            document.getElementById('pr_frame').innerText = o.frame;
+            document.getElementById('pr_lens').innerText = o.lens;
+            document.getElementById('pr_total').innerText = fromCents(o.totalCents) + ' ج.م';
+            document.getElementById('pr_paid').innerText = fromCents(o.paidCents) + ' ج.م';
+            document.getElementById('pr_rem').innerText = fromCents(o.remCents) + ' ج.م';
+
+            const pMap = { cash: 'كاش', instapay: 'إنستاباي/محفظة', visa: 'فيزا' };
+            document.getElementById('pr_method').innerText = pMap[o.paymentMethod] || 'كاش';
+
+            const pElem = document.getElementById('printableReceipt');
+            pElem.classList.remove('hidden');
+            window.print();
+            pElem.classList.add('hidden');
+        }
+
+        function sendWhatsappInvoice(orderId) {
+            const o = APP_DATA.orders.find(x => x.id === orderId);
+            if (!o) return;
+            const msg = `أهلاً بحضرتك يا فندم (${o.name}) في سهل DH Optics 👓\nتم تسجيل فاتورتك بنجاح.\nكود الفاتورة: ${o.id}\nموعد الاستلام المتوقع: ${o.deliveryDate}\nالإجمالي: ${fromCents(o.totalCents)} ج.م\nالمدفوع: ${fromCents(o.paidCents)} ج.م\nالمتبقي للاستلام: ${fromCents(o.remCents)} ج.م\nشكراً لاختياركم لنا!`;
+            window.open(`https://wa.me/2${o.phone}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        function sendReadyWhatsapp(orderId) {
+            const o = APP_DATA.orders.find(x => x.id === orderId);
+            if (!o) return;
+            const msg = `أهلاً بحضرتك يا فندم (${o.name}) من سهل DH Optics 👓\nنظارتك أصبحت جاهزة للاستلام الآن بالفرع.\nكود الفاتورة: ${o.id}\nالمبلغ المتبقي: ${fromCents(o.remCents)} ج.م\nبانتظار زيارتك!`;
+            window.open(`https://wa.me/2${o.phone}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        function deliverOrder(orderId) {
+            const o = APP_DATA.orders.find(x => x.id === orderId);
+            if (!o) return;
+            if (confirm(`تسليم نظارة العميل ${o.name} وتحصيل المتبقي (${fromCents(o.remCents)} ج.م)؟`)) {
+                o.paidCents = o.totalCents;
+                o.remCents = 0;
+                o.status = 'delivered';
+                syncData();
+                showToast(`تم تسليم الطلب ${o.id} وترحيل المبلغ للخزينة`, 'success');
+            }
+        }
+
+        function resetPos() {
+            document.getElementById('pos_form').reset();
+            calcPosFinancials();
+            updateOrderCodePreview();
+            document.getElementById('phone_validation_msg').innerHTML = '';
+        }
+
+        function openProductModal(id = null) {
+            if (id) {
+                const item = APP_DATA.inventory.find(x => x.id === id);
+                document.getElementById('modal_product_title').innerText = 'تعديل صنف: ' + item.name;
+                document.getElementById('edit_prod_id').value = item.id;
+                document.getElementById('m_prod_code').value = item.code;
+                document.getElementById('m_prod_name').value = item.name;
+                document.getElementById('m_prod_cost').value = item.cost;
+                document.getElementById('m_prod_price').value = item.price;
+                document.getElementById('m_prod_stock').value = item.stock;
+                document.getElementById('m_prod_alert').value = item.alertLimit;
+            } else {
+                document.getElementById('modal_product_title').innerText = 'إضافة شنبر جديد للمخزن';
+                document.getElementById('edit_prod_id').value = '';
+                ['m_prod_code', 'm_prod_name', 'm_prod_cost', 'm_prod_price', 'm_prod_stock'].forEach(i => document.getElementById(i).value = '');
+                document.getElementById('m_prod_alert').value = 2;
+            }
+            document.getElementById('product_modal').style.display = 'flex';
+        }
+
+        function saveProduct() {
+            const code = document.getElementById('m_prod_code').value.trim();
+            const name = document.getElementById('m_prod_name').value.trim();
+            const cost = parseFloat(document.getElementById('m_prod_cost').value) || 0;
+            const price = parseFloat(document.getElementById('m_prod_price').value) || 0;
+            const stock = parseInt(document.getElementById('m_prod_stock').value) || 0;
+            const alertLimit = parseInt(document.getElementById('m_prod_alert').value) || 2;
+            const editId = document.getElementById('edit_prod_id').value;
+
+            if (!code || !name) return showToast('يرجى ملء الكود والاسم بشكل صحيح', 'danger');
+
+            if (editId) {
+                const idx = APP_DATA.inventory.findIndex(x => x.id === editId);
+                if (idx > -1) APP_DATA.inventory[idx] = { id: editId, code, name, cost, price, stock, alertLimit };
+            } else {
+                APP_DATA.inventory.unshift({ id: Date.now().toString(), code, name, cost, price, stock, alertLimit });
+            }
+
+            syncData();
+            closeModal('product_modal');
+            showToast('تم حفظ الصنف بنجاح في المخزن', 'success');
+        }
+
+        function deleteProduct(id) {
+            if (confirm('هل أنت متأكد من حذف هذا الصنف من المخزن؟')) {
+                APP_DATA.inventory = APP_DATA.inventory.filter(x => x.id !== id);
+                syncData();
+                showToast('تم حذف الصنف', 'success');
+            }
+        }
+
+        function addExpense() {
+            const note = document.getElementById('exp_note').value.trim();
+            const val = parseFloat(document.getElementById('exp_val').value) || 0;
+            if (!note || val <= 0) return showToast('برجاء كتابة بيان ومبلغ صحيح', 'danger');
+
+            const today = getTodayStr();
+            APP_DATA.expenses.unshift({ 
+                id: Date.now().toString(), 
+                note, 
+                valCents: toCents(val), 
+                dateStr: today,
+                date: new Date().toLocaleDateString('ar-EG') 
+            });
+            syncData();
+            document.getElementById('exp_note').value = '';
+            document.getElementById('exp_val').value = '';
+            showToast('تم تسجيل المصروف بنجاح', 'success');
+        }
+
+        function deleteExpense(id) {
+            if (confirm('حذف هذا المصروف وإلغاؤه؟')) {
+                APP_DATA.expenses = APP_DATA.expenses.filter(x => x.id !== id);
+                syncData();
+                showToast('تم حذف المصروف', 'success');
+            }
+        }
+
+        function closeShift(manual = false) {
+            const today = getTodayStr();
+            const todayOrders = APP_DATA.orders.filter(o => o.dateStr === today);
+            const todayExpenses = APP_DATA.expenses.filter(e => e.dateStr === today);
+
+            let todaySales = 0, todayCash = 0;
+            todayOrders.forEach(o => {
+                todaySales += o.totalCents;
+                todayCash += o.paidCents;
+            });
+            let todayExp = todayExpenses.reduce((acc, curr) => acc + curr.valCents, 0);
+
+            if (manual && !confirm(`تأكيد تقفيل اليومية الحالية؟\nالمبيعات: ${fromCents(todaySales)} ج.م\nالتحصيل: ${fromCents(todayCash)} ج.م`)) {
+                return;
+            }
+
+            APP_DATA.shifts.unshift({
+                date: today,
+                sales: fromCents(todaySales),
+                cash: fromCents(todayCash),
+                expenses: fromCents(todayExp),
+                net: fromCents(todayCash - todayExp),
+                time: new Date().toLocaleTimeString('ar-EG')
+            });
+
+            // تحويل فواتير ومصروفات اليوم لليوم المقفل وتحديث اليوم الجديد
+            const nextDay = new Date();
+            nextDay.setDate(nextDay.getDate() + 1);
+            APP_DATA.meta.currentDay = nextDay.toISOString().slice(0, 10);
+            
+            syncData();
+            showToast('تم تقفيل اليوم وترحيل البيانات للأرشيف بنجاح', 'success');
+        }
+
+        // تحديث وعرض كل واجهات النظام
+        function refreshUI() {
+            checkAutoDayReset();
+
+            const today = APP_DATA.meta.currentDay || getTodayStr();
+            const lowStockItems = APP_DATA.inventory.filter(i => i.stock <= i.alertLimit);
+            document.getElementById('low_stock_alert').style.display = lowStockItems.length > 0 ? 'block' : 'none';
+
+            // حسابات اليوم الحالي فقط (Active Day)
+            const todayOrders = APP_DATA.orders.filter(o => o.dateStr === today);
+            const todayExpenses = APP_DATA.expenses.filter(e => e.dateStr === today);
+
+            let todayGrossSales = 0, todayTotalCash = 0, todayTotalRem = 0, todayPending = 0;
+            let cashInDrawer = 0, digitalInBank = 0;
+
+            todayOrders.forEach(o => {
+                todayGrossSales += o.totalCents;
+                todayTotalRem += o.remCents;
+                if (o.status === 'pending') todayPending++;
+
+                if (o.paymentMethod === 'cash') cashInDrawer += o.paidCents;
+                else digitalInBank += o.paidCents;
+                todayTotalCash += o.paidCents;
+            });
+
+            let todayExp = todayExpenses.reduce((acc, curr) => acc + curr.valCents, 0);
+
+            // لوحة المتابعة لليوم الحالي
+            document.getElementById('dash_today_sales').innerText = fromCents(todayGrossSales) + ' ج.م';
+            document.getElementById('dash_total_cash').innerText = fromCents(todayTotalCash - todayExp) + ' ج.م';
+            document.getElementById('dash_total_rem').innerText = fromCents(todayTotalRem) + ' ج.م';
+            document.getElementById('dash_pending_count').innerText = todayPending + ' طلب';
+
+            // الخزينة والحسابات لليوم الحالي
+            document.getElementById('acc_gross').innerText = fromCents(todayGrossSales) + ' ج.م';
+            document.getElementById('acc_cash').innerText = fromCents(cashInDrawer - todayExp) + ' ج.م';
+            document.getElementById('acc_digital').innerText = fromCents(digitalInBank) + ' ج.م';
+            document.getElementById('acc_expenses').innerText = fromCents(todayExp) + ' ج.م';
+
+            // جدول أحدث 5 فواتير لليوم
+            const recTbody = document.querySelector('#recent_orders_table tbody');
+            recTbody.innerHTML = todayOrders.slice(0, 5).map(o => `
+                <tr>
+                    <td style="font-family:monospace; color:var(--accent)">${o.id}</td>
+                    <td><b>${o.name}</b></td>
+                    <td style="font-family:monospace">${o.phone}</td>
+                    <td>${fromCents(o.totalCents)}</td>
+                    <td style="color:var(--success)">${fromCents(o.paidCents)}</td>
+                    <td style="color:var(--warning)">${fromCents(o.remCents)}</td>
+                    <td>${o.status === 'delivered' ? '<span style="color:var(--success)">مسدد</span>' : '<span style="color:var(--warning)">عربون</span>'}</td>
+                </tr>
+            `).join('') || '<tr><td colspan="7" style="text-align:center; color:var(--text-muted)">لا توجد فواتير مسجلة اليوم</td></tr>';
+
+            renderOrdersTable();
+
+            // جدول المخزن
+            const invTbody = document.querySelector('#inventory_table tbody');
+            invTbody.innerHTML = APP_DATA.inventory.map(i => `
+                <tr>
+                    <td style="font-family:monospace; color:var(--accent)">${i.code}</td>
+                    <td><b>${i.name}</b></td>
+                    <td>${i.cost} ج.م</td>
+                    <td style="font-weight:bold">${i.price} ج.م</td>
+                    <td style="color:${i.stock <= i.alertLimit ? 'var(--danger)' : 'inherit'}; font-weight:bold">${i.stock} قطعة</td>
+                    <td>${i.stock <= i.alertLimit ? '<span style="color:var(--danger)">⚠️ ناقص</span>' : '<span style="color:var(--success)">✅ متوفر</span>'}</td>
+                    <td>
+                        <button class="btn btn_primary" style="padding:4px 8px; font-size:11px;" onclick="openProductModal('${i.id}')">تعديل</button>
+                        <button class="btn btn_danger" style="padding:4px 8px; font-size:11px;" onclick="deleteProduct('${i.id}')">حذف</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            // جدول العملاء
+            const custTbody = document.querySelector('#customers_table tbody');
+            custTbody.innerHTML = APP_DATA.customers.map(c => `
+                <tr>
+                    <td><b>${c.name}</b></td>
+                    <td style="font-family:monospace">${c.phone}</td>
+                    <td>${c.address || '-'}</td>
+                    <td>${c.orderCount || 1}</td>
+                    <td style="color:var(--success); font-weight:bold;">${fromCents(c.totalPurchases)} ج.م</td>
+                    <td>
+                        <a href="https://wa.me/2${c.phone}" target="_blank" class="btn btn_success" style="padding:4px 8px; font-size:11px; text-decoration:none;"><i class="fab fa-whatsapp"></i> مراسلة</a>
+                    </td>
+                </tr>
+            `).join('');
+
+            // جدول مصروفات اليوم
+            const expTbody = document.querySelector('#expenses_table tbody');
+            expTbody.innerHTML = todayExpenses.map(e => `
+                <tr>
+                    <td>${e.note}</td>
+                    <td style="color:var(--danger); font-weight:bold;">${fromCents(e.valCents)} ج.م</td>
+                    <td>${e.date}</td>
+                    <td><button class="btn btn_danger" style="padding:4px 8px; font-size:11px;" onclick="deleteExpense('${e.id}')"><i class="fas fa-trash"></i></button></td>
+                </tr>
+            `).join('') || '<tr><td colspan="4" style="text-align:center; color:var(--text-muted)">لا توجد مصروفات لليوم</td></tr>';
+
+            // جدول تقارير الورديات المقفلة
+            const repTbody = document.querySelector('#daily_reports_table tbody');
+            repTbody.innerHTML = APP_DATA.shifts.map(s => `
+                <tr>
+                    <td>${s.date}</td>
+                    <td>${s.sales} ج.م</td>
+                    <td style="color:var(--success); font-weight:bold">${s.cash} ج.م</td>
+                    <td style="color:var(--danger)">${s.expenses || '0.00'} ج.م</td>
+                    <td style="color:var(--accent); font-weight:bold">${s.net || s.cash} ج.م</td>
+                    <td style="color:var(--text-muted)">${s.time}</td>
+                </tr>
+            `).join('') || '<tr><td colspan="6" style="text-align:center; color:var(--text-muted)">لا توجد ورديات مقفلة بعد</td></tr>';
+
+            populateFrameSelect();
+        }
+
+        // عرض فواتير اليوم النشطة
+        function renderOrdersTable() {
+            const tbody = document.querySelector('#orders_table tbody');
+            const today = APP_DATA.meta.currentDay || getTodayStr();
+            const q = (document.getElementById('search_today_orders')?.value || '').trim().toLowerCase();
+
+            const todayOrders = APP_DATA.orders.filter(o => o.dateStr === today);
+            const filtered = todayOrders.filter(o => {
+                if (!q) return true;
+                return o.phone.includes(q) || o.name.toLowerCase().includes(q) || o.id.toLowerCase().includes(q);
+            });
+
+            tbody.innerHTML = filtered.map(o => `
+                <tr>
+                    <td style="font-family:monospace; color:var(--accent)">${o.id}</td>
+                    <td style="font-size:11px;">${new Date(o.timestamp).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'})}</td>
+                    <td><b>${o.name}</b></td>
+                    <td style="font-family:monospace">${o.phone}</td>
+                    <td style="font-weight:bold">${fromCents(o.totalCents)}</td>
+                    <td style="color:var(--success); font-weight:bold">${fromCents(o.paidCents)}</td>
+                    <td style="color:var(--warning); font-weight:bold">${fromCents(o.remCents)}</td>
+                    <td style="font-size:11px;">${o.deliveryDate}</td>
+                    <td>${o.status === 'delivered' ? '<span style="color:var(--success); font-weight:bold;">مسدد</span>' : '<span style="color:var(--warning); font-weight:bold;">عربون</span>'}</td>
+                    <td style="white-space:nowrap;">
+                        ${o.status === 'pending' ? `
+                            <button onclick="deliverOrder('${o.id}')" title="تسليم الطلب" class="btn btn_success" style="padding:4px 8px; font-size:11px;">تسليم</button>
+                            <button onclick="sendReadyWhatsapp('${o.id}')" title="إشعار الجاهزية" class="btn btn_primary" style="padding:4px 8px; font-size:11px;"><i class="fas fa-bell"></i></button>
+                        ` : ''}
+                        <button onclick="sendWhatsappInvoice('${o.id}')" title="إرسال الفاتورة عبر واتساب" class="btn btn_success" style="padding:4px 8px; font-size:11px;"><i class="fab fa-whatsapp"></i></button>
+                        <button onclick="printReceipt('${o.id}')" title="طباعة الفاتورة" class="btn btn_primary" style="padding:4px 8px; font-size:11px;"><i class="fas fa-print"></i></button>
+                    </td>
+                </tr>
+            `).join('') || '<tr><td colspan="10" style="text-align:center; color:var(--text-muted)">لا توجد فواتير لهذا اليوم بعد</td></tr>';
+        }
+
+        // عرض والبحث في أرشيف الفواتير القديمة المقفلة
+        function renderArchiveTable() {
+            const tbody = document.querySelector('#archive_table tbody');
+            const from = document.getElementById('archive_date_from').value;
+            const to = document.getElementById('archive_date_to').value;
+            const kw = (document.getElementById('archive_keyword').value || '').trim().toLowerCase();
+
+            const filtered = APP_DATA.orders.filter(o => {
+                const oDate = o.dateStr || o.timestamp.slice(0, 10);
+                if (from && oDate < from) return false;
+                if (to && oDate > to) return false;
+                if (kw) {
+                    const matchPhone = o.phone.includes(kw);
+                    const matchName = o.name.toLowerCase().includes(kw);
+                    const matchCode = o.id.toLowerCase().includes(kw);
+                    if (!matchPhone && !matchName && !matchCode) return false;
+                }
+                return true;
+            });
+
+            tbody.innerHTML = filtered.map(o => `
+                <tr>
+                    <td style="font-family:monospace; color:var(--accent)">${o.id}</td>
+                    <td style="font-size:11px;">${new Date(o.timestamp).toLocaleDateString('ar-EG')}</td>
+                    <td><b>${o.name}</b></td>
+                    <td style="font-family:monospace">${o.phone}</td>
+                    <td style="font-weight:bold">${fromCents(o.totalCents)} ج.م</td>
+                    <td style="color:var(--success); font-weight:bold">${fromCents(o.paidCents)} ج.م</td>
+                    <td style="color:var(--warning); font-weight:bold">${fromCents(o.remCents)} ج.م</td>
+                    <td>${o.paymentMethod === 'cash' ? 'كاش' : (o.paymentMethod === 'instapay' ? 'إنستاباي' : 'فيزا')}</td>
+                    <td>${o.status === 'delivered' ? '<span style="color:var(--success)">مسدد ومسلم</span>' : '<span style="color:var(--warning)">عربون / معلق</span>'}</td>
+                    <td style="white-space:nowrap;">
+                        <button onclick="printReceipt('${o.id}')" title="طباعة نسخة" class="btn btn_primary" style="padding:4px 8px; font-size:11px;"><i class="fas fa-print"></i></button>
+                        <button onclick="sendWhatsappInvoice('${o.id}')" title="إرسال واتساب" class="btn btn_success" style="padding:4px 8px; font-size:11px;"><i class="fab fa-whatsapp"></i></button>
+                    </td>
+                </tr>
+            `).join('') || '<tr><td colspan="10" style="text-align:center; color:var(--text-muted)">لا توجد فواتير تطابق شروط البحث في الأرشيف</td></tr>';
+        }
+
+        function resetArchiveFilters() {
+            document.getElementById('archive_date_from').value = '';
+            document.getElementById('archive_date_to').value = '';
+            document.getElementById('archive_keyword').value = '';
+            renderArchiveTable();
+        }
+
+        function showToast(msg, type = 'info') {
+            const stack = document.getElementById('toast_stack');
+            const t = document.createElement('div');
+            t.className = 'toast';
+            const colors = { success: 'var(--success)', danger: 'var(--danger)', warning: 'var(--warning)', info: 'var(--primary)' };
+            t.style.borderRightColor = colors[type] || 'var(--primary)';
+            t.innerHTML = `<span>${msg}</span>`;
+            t.onclick = () => t.remove();
+            stack.appendChild(t);
+            setTimeout(() => { if (t.parentNode) t.remove(); }, 3500);
+        }
+
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        function exportData() {
+            const dataStr = JSON.stringify(APP_DATA, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `Sahl_DH_Optics_MasterBackup_${new Date().toISOString().slice(0,10)}.json`;
+            link.click();
+            showToast('تم تصدير النسخة الاحتياطية بنجاح', 'success');
+        }
+
+        function importData(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const r = new FileReader();
+            r.onload = function(evt) {
+                try {
+                    const parsed = JSON.parse(evt.target.result);
+                    if (parsed.orders && parsed.inventory) {
+                        if (confirm('تأكيد استبدال البيانات الحالية بالنسخة المرفوعة؟')) {
+                            APP_DATA = parsed;
+                            syncData();
+                            showToast('تم استرجاع البيانات بنجاح', 'success');
+                        }
+                    } else {
+                        showToast('الملف غير متوافق مع نظام سهل DH', 'danger');
+                    }
+                } catch(err) {
+                    showToast('خطأ أثناء قراءة الملف', 'danger');
+                }
+            };
+            r.readAsText(file);
+        }
+
+        function factoryReset() {
+            if (confirm('تحذير: سيتم مسح كافة الفواتير، المخزن، وحسابات العملاء بالكامل. هل أنت متأكد؟')) {
+                localStorage.removeItem('SAHL_DH_OPTICS_MASTER_DATA');
+                location.reload();
+            }
+        }
+
+        setInterval(() => {
+            const el = document.getElementById('clock_display');
+            if (el) el.innerText = new Date().toLocaleString('ar-EG');
+            checkAutoDayReset(); // فحص مستمر لتغير منتصف الليل
+        }, 1000);
+    </script>
+</body>
+</html>
